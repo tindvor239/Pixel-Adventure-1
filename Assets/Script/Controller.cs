@@ -59,14 +59,15 @@ public class Controller : MonoBehaviour
     }
     public void Turning(float move)
     {
-        if (rigidbody.velocity.x <= -0.01f)
+        if (move <= -0.01f)
         {
             transform.localScale = new Vector2(-startScale.x, transform.localScale.y);
         }
-        else if (rigidbody.velocity.x >= 0.01f)
+        else if (move >= 0.01f)
         {
             transform.localScale = new Vector2(startScale.x, transform.localScale.y);
         }
+
     }
 
     public void MovingAnimation(float move)
@@ -85,7 +86,7 @@ public class Controller : MonoBehaviour
             IsGrounded = true;
         }
     }
-    void OnCollisionExit2D(Collision2D collision)
+    public virtual void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Terrain")
         {
