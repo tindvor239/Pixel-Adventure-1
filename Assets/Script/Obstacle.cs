@@ -18,6 +18,5 @@ public class Obstacle : MonoBehaviour
         float sine = Mathf.Sin(cycles * tau);
         Vector2 offset = target * sine;
         transform.position = startPosition + offset;
-        
     }
 }

@@ -2,70 +2,64 @@
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Feet))]
+[RequireComponent(typeof(CharacterStats))]
 public class Controller : MonoBehaviour
 {
     private Rigidbody2D rigidbody;
     [SerializeField] float moveSpeed;
     [SerializeField] float jumpSpeed;
     [SerializeField] bool isGrounded;
-    [SerializeField] Animator animator;
-    private Vector2 startScale;
-    private Vector2 startPosition;
+    public Feet feet;
+    private Animator animator;
+    private CharacterStats stats;
+
     public Animator Animator
     {
         get { return animator; }
-        set { animator = value; }
     }
 
     public float MoveSpeed
     {
         get { return moveSpeed; }
-        set { moveSpeed = value; }
     }
     public float JumpSpeed
     {
         get { return jumpSpeed; }
-        set { jumpSpeed = value; }
     }
     public bool IsGrounded
     {
         get { return isGrounded; }
-        set { isGrounded = value; }
     }
     public Rigidbody2D Rigidbody
     {
         get { return rigidbody; }
-        set { rigidbody = value; }
-    }
-    public Vector2 StartScale
-    {
-        get { return startScale; }
-        set { startScale = value; }
     }
 
-    public Vector2 StartPosition
+
+    public CharacterStats Stats
     {
-        get { return startPosition; }
-        set { startPosition = value; }
+        get { return stats; }
     }
 
     // Start is called before the first frame update
     public virtual void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        startScale = transform.localScale;
+        feet = GetComponentInChildren<Feet>();
         animator = GetComponent<Animator>();
-        StartPosition = transform.position;
+        stats = GetComponent<CharacterStats>();
+    }
+
+    public virtual void Update()
+    {
+        isGrounded = feet.IsGrounded;
     }
     public void Turning(float move)
     {
-        if (move <= -0.01f)
+        if (move != 0)
         {
-            transform.localScale = new Vector2(-startScale.x, transform.localScale.y);
-        }
-        else if (move >= 0.01f)
-        {
-            transform.localScale = new Vector2(startScale.x, transform.localScale.y);
+            transform.right = new Vector2(rigidbody.velocity.x, 0);
         }
 
     }
@@ -75,22 +69,6 @@ public class Controller : MonoBehaviour
         if(isGrounded)
         {
             animator.SetFloat("speed", Mathf.Abs(move));
-        }
-    }
-
-
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Terrain")
-        {
-            IsGrounded = true;
-        }
-    }
-    public virtual void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Terrain")
-        {
-            IsGrounded = false;
         }
     }
 

@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class EnemyController : Controller
 {
     [SerializeField] Transform target;
-    [SerializeField] Transform player;
-    [SerializeField] float distance;
+    [SerializeField] private Transform player;
+    [SerializeField] Vector2 viewRange;
     [SerializeField] Transform[] destinations = new Transform[2];
     [SerializeField] bool isPatrol = true;
-
     // Start is called before the first frame update
     public override void Start()
     {
@@ -16,19 +16,24 @@ public class EnemyController : Controller
         {
             destination.parent = null;
         }
-        
     }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, distance);
+        Gizmos.DrawWireCube(transform.position, viewRange);
     }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
         SwitchTarget();
-        if(isPatrol)
+        if (player == null)
+        {
+            if(SceneMnger.instance.Player != null)
+                player = SceneMnger.instance.Player.transform;
+        }
+        if (isPatrol)
         {
             Patrolling();
         }
@@ -43,7 +48,6 @@ public class EnemyController : Controller
                 Following();
             }
         }
-        
     }
 
     void Moving(float moveAxis)
@@ -57,7 +61,11 @@ public class EnemyController : Controller
     {
         if(target == null)
         {
-            target = target = destinations[Random.Range(0, 1)];
+            target = destinations[Random.Range(0, 1)];
+        }
+        else if(target.tag == "Player")
+        {
+            target = destinations[Random.Range(0, 1)];
         }
         Vector2 facing = target.position - transform.position;
         float moveAxis = Mathf.Sign(facing.x);
@@ -83,7 +91,9 @@ public class EnemyController : Controller
     {
         if(player != null)
         {
-            if(Vector2.Distance(transform.position, player.position) <= distance)
+            float distanceX = Vector2.Distance(new Vector2(transform.position.x, 0), new Vector2(player.position.x, 0));
+            float distanceY = Vector2.Distance(new Vector2(0, transform.position.y), new Vector2(0, player.position.y));
+            if (distanceX < viewRange.x / 2 && distanceY <= viewRange.y / 2)
             {
                 isPatrol = false;
                 target = player;
@@ -95,13 +105,8 @@ public class EnemyController : Controller
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    public Transform Player
     {
-        if (collision.gameObject.tag == "Player")
-        {
-            print(collision.gameObject.name);
-            Destroy(collision.gameObject);
-        }
+        get { return player; }
     }
-
 }

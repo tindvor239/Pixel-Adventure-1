@@ -2,7 +2,8 @@
 
 public class Side : MonoBehaviour
 {
-    private bool isWallSliding;
+    [SerializeField] float distance;
+    bool isWallSliding;
 
     public bool IsWallSliding
     {
@@ -10,16 +11,15 @@ public class Side : MonoBehaviour
         set { isWallSliding = value; }
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Terrain")
-        {
+        if(collision.tag == "Terrain")
             isWallSliding = true;
-        }
     }
 
-    void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        isWallSliding = false;
+        if (collision.tag == "Terrain")
+            isWallSliding = false;
     }
 }

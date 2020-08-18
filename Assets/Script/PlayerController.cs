@@ -1,86 +1,127 @@
 ﻿using UnityEngine;
-
+using UnityEngine.UI;
 public class PlayerController : Controller
 {
-    // Start is called before the first frame update
+    // Start is called before the first frame update.
     [SerializeField] Side side;
-    [SerializeField] Feet feet;
-    [SerializeField] bool isSlideWallJumping;
     [SerializeField] bool canBeDamage;
-    bool isCollide;
+    [SerializeField] float currentHitDelay;
+    [SerializeField] Slider healthBar;
+    float hitDelay;
     bool isBlinking = false;
     float blinkTime = 0.2f;
     int blinkCount = 0;
     bool isBlink = true;
-    float move = 0;
+
+    private void Awake()
+    {
+        hitDelay = currentHitDelay;
+        print(hitDelay);
+    }
     public override void Start()
     {
         base.Start();
+
+        if(GameObject.FindGameObjectWithTag("PlayerHealth") != null)
+        {
+            GameObject healthBarObj = GameObject.FindGameObjectWithTag("PlayerHealth");
+            healthBar = healthBarObj.GetComponent<Slider>();
+            healthBar.maxValue = Stats.MaxHp;
+        }
+        else
+        {
+            print("Are you sure that u already add healthbar???");
+        }
     }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        base.Update();
+
+        float move = 0;
+        currentHitDelay -= Time.deltaTime;
         canBeDamage = GetCanBeDamage();
-        if (side.IsWallSliding == false && IsGrounded)
+        healthBar.value = Stats.HP;
+
+        if (side.IsWallSliding == false && IsGrounded) // if you are not sliding and in the ground you can normal jump.
         {
             Jump();
         }
-        else if (side.IsWallSliding && IsGrounded)
+        else if (side.IsWallSliding && IsGrounded == false) // if you are sliding and not touching the ground then jump like clamping the wall.
         {
             WallJump();
         }
         Animator.SetBool("isWallJump", side.IsWallSliding);
         Animator.SetBool("isJumping", !IsGrounded);
+        
         if (side.IsWallSliding == false)
         {
-            move = Input.GetAxis("Horizontal") * MoveSpeed * Time.deltaTime;
-            Rigidbody.velocity = new Vector2(move, Rigidbody.velocity.y);
-            Turning(move);
+            Rigidbody.gravityScale = 1f;
+            move = Move();
         }
         else
         {
-            if (isSlideWallJumping == false) // when wall sliding.
+            Rigidbody.gravityScale = 0.3f;
+            if(Input.GetAxisRaw("Horizontal") > 0 && transform.eulerAngles.y >= 180 || Input.GetAxisRaw("Horizontal") < 0 && transform.eulerAngles.y <= 0)
             {
-                if (Input.GetAxisRaw("Horizontal") != Mathf.Sign(transform.localScale.x)) // if input oposite with scale it will cancel wall sliding.
-                {
-                    side.IsWallSliding = false;
-                }
-                else
-                {
-                    Turning(Rigidbody.velocity.x);
-                }
+                move = Move();
             }
         }
 
-        if (feet.IsOnTerrain) // if when you wall sliding and touch the ground it will cancel wall sliding.
+        if (IsGrounded) // if when you wall sliding and touch the ground it will cancel wall sliding.
         {
+            // somehow disable side script for more reasonable.
+            // becuz when character hit the ground and jump to slide wall you must move character collider outside the wall and move character back the wall again to slide.
+            // then solution is enable gameobject and disable.
+            side.gameObject.SetActive(false);
             side.IsWallSliding = false;
         }
-
-        if (isCollide) // is collide mean collding with enemy or trap.
+        else
         {
-            Rigidbody.velocity = transform.up * 3f;
+            side.gameObject.SetActive(true);
         }
 
         if (feet.IsOnEnemy)
         {
-            Destroy(feet.Enemy);
+            Rigidbody.AddForce(new Vector2(transform.position.x, transform.position.y + 35.0f), ForceMode2D.Impulse);
+            if (currentHitDelay <= 0.0f)
+            {
+                if(feet.Enemy.gameObject.GetComponent<EnemyController>())
+                {
+                    EnemyController enemy = feet.Enemy.gameObject.GetComponent<EnemyController>();
+                    enemy.Stats.HP -= Stats.Damage;
+                }
+                currentHitDelay = hitDelay;
+                feet.IsOnEnemy = false;
+            }
         }
 
-        if (isBlinking)
+        if(isBlinking)
+        {
+            Rigidbody.AddForce(transform.up / 5f, ForceMode2D.Impulse);
+        }
+
+        if (isBlinking) // excecute blinking effect.
         {
             Blinking(ref blinkTime, ref blinkCount, ref isBlink);
         }
         MovingAnimation(move);
+    }
 
+    private float Move()
+    {
+        float move = Input.GetAxisRaw("Horizontal") * MoveSpeed * Time.deltaTime;
+        Rigidbody.velocity = new Vector2(move, Rigidbody.velocity.y);
+        Turning(move);
+        return move;
     }
 
     void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Rigidbody.velocity = transform.up * JumpSpeed;
+            Rigidbody.AddForce(transform.up * JumpSpeed, ForceMode2D.Impulse);
         }
     }
 
@@ -88,13 +129,14 @@ public class PlayerController : Controller
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            isSlideWallJumping = true;
-            Rigidbody.velocity = new Vector2(-Mathf.Sign(transform.localScale.x) * JumpSpeed, 8);
-            IsGrounded = false;
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            isSlideWallJumping = false;
+            if(transform.eulerAngles.y >= 180)
+            {
+                Rigidbody.AddForce(new Vector2(transform.position.x + 50.0f, transform.position.y + 25.0f), ForceMode2D.Impulse);
+            }
+            else
+            {
+                Rigidbody.AddForce(new Vector2(transform.position.x - 50.0f, transform.position.y + 25.0f), ForceMode2D.Impulse);
+            }
         }
     }
 
@@ -119,24 +161,27 @@ public class PlayerController : Controller
             isBlinking = false;
         }
     }
-
+    
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Item")
         {
             Destroy(collision.gameObject);
         }
+        else if (collision.gameObject.tag == "Finish")
+        {
+            SceneMnger.instance.gameState = SceneMnger.GameState.Finish;
+        }
     }
-
+    
     public bool CanBeDamage
     {
         get { return canBeDamage = GetCanBeDamage(); }
     }
-
     #region Can Be Damage Handler
     bool GetCanBeDamage()
     {
-        if (isCollide == false && isBlinking == false)
+        if (isBlinking == false)
             return true;
         else
             return false;
@@ -144,28 +189,19 @@ public class PlayerController : Controller
     public void SetCanBeDamage(bool value)
     {
         isBlinking = value;
-        isCollide = value;
-    }
-    public bool ISCollide
-    {
-        get { return isCollide; }
-        set { isCollide = value; }
     }
     #endregion
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Trap" && canBeDamage)
         {
-            SetCanBeDamage(true);
+            Destroy(gameObject);
         }
-    }
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
-        base.OnCollisionExit2D(collision);
-        if (collision.gameObject.tag == "Trap")
+        else if (collision.gameObject.tag == "Enemy" && canBeDamage)
         {
-            isCollide = false;// fix on enemy too.
+            EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+            SetCanBeDamage(true);
+            Stats.HP -= enemy.Stats.Damage;
         }
     }
-
 }

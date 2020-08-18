@@ -4,14 +4,30 @@ using UnityEngine;
 
 public class Feet : MonoBehaviour
 {
-    private bool isOnTerrain;
-    private bool isOnEnemy;
+    [SerializeField] bool isOnEnemy;
+    private bool isGrounded = false;
+    [SerializeField] float distance;
     private GameObject enemy;
-    private PlayerController player;
+    private Controller characterController;
+    private PlayerController playerController;
 
     private void Start()
     {
-        player = GetComponentInParent<PlayerController>();
+        characterController = GetComponentInParent<Controller>();
+        if(GetComponentInParent<PlayerController>() != null)
+        {
+            playerController = GetComponentInParent<PlayerController>();
+        }
+    }
+
+    private void Update()
+    {
+        isGrounded = OnTerrain();
+
+        if(playerController != null)
+        {
+            //isOnEnemy = OnEnemy();
+        }
     }
 
     public GameObject Enemy
@@ -19,47 +35,44 @@ public class Feet : MonoBehaviour
         get { return enemy; }
         set { enemy = value; }
     }
-    public bool IsOnTerrain
-    {
-        get { return isOnTerrain; }
-        set { isOnTerrain = value; }
-    }
-
     public bool IsOnEnemy
     {
         get { return isOnEnemy; }
         set { isOnEnemy = value; }
     }
 
-    void OnTriggerStay2D(Collider2D collision)
+    public bool IsGrounded
     {
-        if (collision.gameObject.tag == "Terrain")
+        get { return isGrounded; }
+    }
+
+    bool OnTerrain()
+    {
+        Debug.DrawRay(transform.position, -transform.up, Color.red, distance);
+        if (Physics2D.Raycast(transform.position, -transform.up, distance, LayerMask.GetMask("Terrain")))
         {
-            isOnTerrain = true;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Enemy" && player.CanBeDamage)
+        if (collision.gameObject.tag == "Enemy" && playerController.CanBeDamage)
         {
-            player.ISCollide = true;
             isOnEnemy = true;
             enemy = collision.gameObject;
         }
     }
-
+    /*
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Terrain")
-        {
-            isOnTerrain = false;
-            enemy = null;
-        }
-        else if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.tag == "Enemy" && playerController.CanBeDamage)
         {
             isOnEnemy = false;
-            player.ISCollide = false;
         }
-    }
+    }*/
 }
