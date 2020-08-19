@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Trap
   - PlayerHealth
+  - Bullet
   layers:
   - Default
   - TransparentFX

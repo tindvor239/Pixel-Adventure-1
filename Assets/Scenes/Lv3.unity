@@ -2721,6 +2721,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7653814928426235922, guid: 075b86851ced8a344b71164312192583,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 11.700012
+      objectReference: {fileID: 0}
     - target: {fileID: 7653814928426235925, guid: 075b86851ced8a344b71164312192583,
         type: 3}
       propertyPath: m_TagString
@@ -3214,6 +3219,11 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 983268494}
+    - target: {fileID: 7722172321752704713, guid: 5115f660b3e62a945b416ed05a9ab113,
+        type: 3}
+      propertyPath: bulletSpeed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7722172321752704714, guid: 5115f660b3e62a945b416ed05a9ab113,
         type: 3}
       propertyPath: m_LocalPosition.x

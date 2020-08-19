@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CharacterStats : MonoBehaviour
 {
-    private int hp;
+    [SerializeField] private int hp;
     [SerializeField] private int maxHp;
     [SerializeField] private int damage;
     // Start is called before the first frame update

@@ -7,12 +7,10 @@ public class BossController : EnemyController
     [SerializeField] GameObject bullet;
     [SerializeField] float bulletSpeed;
     [SerializeField] Slider healthBar;
-    float shootTime = 1f;
-    float shootDelayTime;
+    [SerializeField] float shootTime = 2f;
     public override void Start()
     {
         base.Start();
-        shootDelayTime = shootTime;
         healthBar.maxValue = Stats.MaxHp;
 
     }
@@ -22,7 +20,7 @@ public class BossController : EnemyController
     {
         base.Update();
         SetHealth();
-        //Shoot();
+        Shoot();
         if(Input.GetKeyDown(KeyCode.Space))
         {
             int ml;
@@ -53,17 +51,19 @@ public class BossController : EnemyController
         shootTime -= Time.deltaTime;
         if (shootTime <= 0.0f)
         {
-            print("In");
+            // create gameobject.
             GameObject newBullet;
             newBullet = Instantiate(bullet);
             newBullet.transform.position = gameObject.transform.position;
 
-            Vector2 direction = transform.position - newBullet.transform.position;
-            float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
-            newBullet.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            // set rotation for bullet.
+            Vector2 direction = Player.transform.position - newBullet.transform.position;
+            float rotationZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            newBullet.transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
+
             Rigidbody2D rigidbody = newBullet.GetComponent<Rigidbody2D>();
-            rigidbody.velocity = newBullet.transform.forward * bulletSpeed * Time.deltaTime;
-            shootTime = shootDelayTime;
+            rigidbody.velocity = newBullet.transform.right * bulletSpeed;
+            shootTime = 2f;
         }
     }
 }

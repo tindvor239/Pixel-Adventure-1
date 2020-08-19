@@ -172,6 +172,13 @@ public class PlayerController : Controller
         {
             SceneMnger.instance.gameState = SceneMnger.GameState.Finish;
         }
+        else if (collision.gameObject.tag == "Bullet" && canBeDamage)
+        {
+            Destroy(collision.gameObject);
+            // deal damage
+            SetCanBeDamage(true);
+            Stats.HP -= 5;
+        }
     }
     
     public bool CanBeDamage
