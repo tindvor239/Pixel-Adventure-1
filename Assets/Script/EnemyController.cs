@@ -7,7 +7,8 @@ public class EnemyController : Controller
     [SerializeField] private Transform player;
     [SerializeField] Vector2 viewRange;
     [SerializeField] Transform[] destinations = new Transform[2];
-    [SerializeField] bool isPatrol = true;
+    [SerializeField] float beenHitForce;
+    bool isPatrol = true;
     // Start is called before the first frame update
     public override void Start()
     {
@@ -105,8 +106,15 @@ public class EnemyController : Controller
         }
     }
 
+    #region Properties
     public Transform Player
     {
         get { return player; }
     }
+
+    public float BeenHitForce
+    {
+        get { return beenHitForce; }
+    }
+    #endregion
 }

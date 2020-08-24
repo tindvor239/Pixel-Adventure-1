@@ -8136,16 +8136,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneManager
       objectReference: {fileID: 0}
-    - target: {fileID: 1205756994099271367, guid: 206b34fcc0cd50e4093a349338076f75,
-        type: 3}
-      propertyPath: finishRange.x
-      value: 3.73
-      objectReference: {fileID: 0}
-    - target: {fileID: 1205756994099271367, guid: 206b34fcc0cd50e4093a349338076f75,
-        type: 3}
-      propertyPath: finishRange.y
-      value: 5.15
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 206b34fcc0cd50e4093a349338076f75, type: 3}
 --- !u!1001 &1926465708625682333

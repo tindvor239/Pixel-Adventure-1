@@ -7,16 +7,25 @@ public class PlayerController : Controller
     [SerializeField] bool canBeDamage;
     [SerializeField] float currentHitDelay;
     [SerializeField] Slider healthBar;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip jumpSound;
+    [SerializeField] AudioClip movingSound;
+    [SerializeField] AudioClip hitSound;
+    [SerializeField] AudioClip eatFruitSound;
+    [SerializeField] EnemyController enemy;
+
     float hitDelay;
     bool isBlinking = false;
     float blinkTime = 0.2f;
     int blinkCount = 0;
     bool isBlink = true;
+    float move = 0;
 
     private void Awake()
     {
         hitDelay = currentHitDelay;
-        print(hitDelay);
+        audioSource = GetComponent<AudioSource>();
+        
     }
     public override void Start()
     {
@@ -39,7 +48,6 @@ public class PlayerController : Controller
     {
         base.Update();
 
-        float move = 0;
         currentHitDelay -= Time.deltaTime;
         canBeDamage = GetCanBeDamage();
         healthBar.value = Stats.HP;
@@ -55,6 +63,7 @@ public class PlayerController : Controller
         Animator.SetBool("isWallJump", side.IsWallSliding);
         Animator.SetBool("isJumping", !IsGrounded);
         
+        // on NOT sliding wall.
         if (side.IsWallSliding == false)
         {
             Rigidbody.gravityScale = 1f;
@@ -84,7 +93,8 @@ public class PlayerController : Controller
 
         if (feet.IsOnEnemy)
         {
-            Rigidbody.AddForce(new Vector2(transform.position.x, transform.position.y + 35.0f), ForceMode2D.Impulse);
+            // when hit enemy add force up.
+            Rigidbody.AddForce(new Vector2(transform.position.x, transform.position.y + enemy.BeenHitForce), ForceMode2D.Impulse);
             if (currentHitDelay <= 0.0f)
             {
                 if(feet.Enemy.gameObject.GetComponent<EnemyController>())
@@ -106,6 +116,7 @@ public class PlayerController : Controller
         {
             Blinking(ref blinkTime, ref blinkCount, ref isBlink);
         }
+
         MovingAnimation(move);
     }
 
@@ -121,6 +132,9 @@ public class PlayerController : Controller
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            // jump sound.
+            audioSource.PlayOneShot(jumpSound);
+
             Rigidbody.AddForce(transform.up * JumpSpeed, ForceMode2D.Impulse);
         }
     }
@@ -129,13 +143,16 @@ public class PlayerController : Controller
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            // jump sound.
+            audioSource.PlayOneShot(jumpSound);
+
             if(transform.eulerAngles.y >= 180)
             {
-                Rigidbody.AddForce(new Vector2(transform.position.x + 50.0f, transform.position.y + 25.0f), ForceMode2D.Impulse);
+                Rigidbody.AddForce(new Vector2(transform.position.x + 40.0f, transform.position.y + 18.0f), ForceMode2D.Impulse);
             }
             else
             {
-                Rigidbody.AddForce(new Vector2(transform.position.x - 50.0f, transform.position.y + 25.0f), ForceMode2D.Impulse);
+                Rigidbody.AddForce(new Vector2(transform.position.x - 40.0f, transform.position.y + 25.0f), ForceMode2D.Impulse);
             }
         }
     }
@@ -166,6 +183,7 @@ public class PlayerController : Controller
     {
         if (collision.gameObject.tag == "Item")
         {
+            audioSource.PlayOneShot(eatFruitSound);
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "Finish")
@@ -175,6 +193,8 @@ public class PlayerController : Controller
         else if (collision.gameObject.tag == "Bullet" && canBeDamage)
         {
             Destroy(collision.gameObject);
+            // play been hit sound.
+            audioSource.PlayOneShot(hitSound);
             // deal damage
             SetCanBeDamage(true);
             Stats.HP -= 5;
@@ -206,7 +226,9 @@ public class PlayerController : Controller
         }
         else if (collision.gameObject.tag == "Enemy" && canBeDamage)
         {
-            EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+            enemy = collision.gameObject.GetComponent<EnemyController>();
+            // player been hit sound
+            audioSource.PlayOneShot(hitSound);
             SetCanBeDamage(true);
             Stats.HP -= enemy.Stats.Damage;
         }

@@ -212,12 +212,11 @@ MonoBehaviour:
   destinations:
   - {fileID: 7722172322221917908}
   - {fileID: 7722172322886990928}
-  isPatrol: 1
-  maxHp: 50
-  hp: 0
+  beenHitForce: 15
   bullet: {fileID: 0}
   bulletSpeed: 100
   healthBar: {fileID: 0}
+  shootTime: 2
 --- !u!1 &7722172322221917911
 GameObject:
   m_ObjectHideFlags: 0

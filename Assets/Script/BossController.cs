@@ -52,18 +52,22 @@ public class BossController : EnemyController
         if (shootTime <= 0.0f)
         {
             // create gameobject.
-            GameObject newBullet;
-            newBullet = Instantiate(bullet);
-            newBullet.transform.position = gameObject.transform.position;
+            if(Player != null)
+            {
+                GameObject newBullet;
+                newBullet = Instantiate(bullet);
+                newBullet.transform.position = gameObject.transform.position;
 
-            // set rotation for bullet.
-            Vector2 direction = Player.transform.position - newBullet.transform.position;
-            float rotationZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            newBullet.transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
+                // if player NOT null.
+                // set rotation for bullet.
+                Vector2 direction = Player.transform.position - newBullet.transform.position;
+                float rotationZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                newBullet.transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
 
-            Rigidbody2D rigidbody = newBullet.GetComponent<Rigidbody2D>();
-            rigidbody.velocity = newBullet.transform.right * bulletSpeed;
-            shootTime = 2f;
+                Rigidbody2D rigidbody = newBullet.GetComponent<Rigidbody2D>();
+                rigidbody.velocity = newBullet.transform.right * bulletSpeed;
+                shootTime = 2f;
+            }
         }
     }
 }

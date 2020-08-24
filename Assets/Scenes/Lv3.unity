@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34638c4e52067204a97d4180bbaf725a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 0
   maxHp: 50
   damage: 5
 --- !u!1001 &272071838
@@ -3079,6 +3080,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 7.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -27.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2931478331525514813, guid: a1110cc9da3645d46909e83b0e7a2707,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 14.8
+      objectReference: {fileID: 0}
     - target: {fileID: 2931478331790212306, guid: a1110cc9da3645d46909e83b0e7a2707,
         type: 3}
       propertyPath: m_LocalPosition.x
