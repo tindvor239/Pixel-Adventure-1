@@ -14,6 +14,7 @@ public class PlayerController : Controller
     [SerializeField] AudioClip eatFruitSound;
     [SerializeField] EnemyController enemy;
 
+    byte score;
     float hitDelay;
     bool isBlinking = false;
     float blinkTime = 0.2f;
@@ -116,8 +117,13 @@ public class PlayerController : Controller
         {
             Blinking(ref blinkTime, ref blinkCount, ref isBlink);
         }
-
         MovingAnimation(move);
+        switch(SceneMnger.instance.gameState)
+        {
+            case SceneMnger.GameState.Finish:
+                SetScore((byte)(score + Stats.HP));
+                break;
+        }
     }
 
     private float Move()
@@ -183,6 +189,8 @@ public class PlayerController : Controller
     {
         if (collision.gameObject.tag == "Item")
         {
+            score += 1;
+            Stats.HP += 5;
             audioSource.PlayOneShot(eatFruitSound);
             Destroy(collision.gameObject);
         }
@@ -226,11 +234,18 @@ public class PlayerController : Controller
         }
         else if (collision.gameObject.tag == "Enemy" && canBeDamage)
         {
+            score += 2;
             enemy = collision.gameObject.GetComponent<EnemyController>();
             // player been hit sound
             audioSource.PlayOneShot(hitSound);
             SetCanBeDamage(true);
             Stats.HP -= enemy.Stats.Damage;
         }
+    }
+
+    void SetScore(byte score)
+    {
+        MenuController.Instance.SetByte(MenuController.Instance.Maps[SceneMnger.instance.CurrentScene].name, " high score", score);
+        print(string.Format("===============================================\ncurrent score: {0}", score));
     }
 }

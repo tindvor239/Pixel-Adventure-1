@@ -5,12 +5,14 @@ public class SceneMnger : MonoBehaviour
 {
     [SerializeField] Transform startPos;
     [SerializeField] Transform finishPos;
-    [SerializeField] GameObject player;
+    [SerializeField] PlayerController player;
+    [SerializeField] Map currentMap;
     byte currentScene = 0;
 
     // Audio Section.
     [SerializeField] AudioClip finishSound;
     [SerializeField] AudioClip gameOverSound;
+    MenuController menuController;
     AudioSource audioSource;
 
     public GameState gameState;
@@ -23,9 +25,8 @@ public class SceneMnger : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
     #endregion
-
     #region Properties
-    public GameObject Player
+    public PlayerController Player
     {
         get { return player; }
     }
@@ -35,14 +36,24 @@ public class SceneMnger : MonoBehaviour
         get { return currentScene; }
     }
 
+    public Map CurrentMap
+    {
+        get { return currentMap; }
+        set { currentMap = value; }
+    }
     #endregion
+    private void Start()
+    {
+        menuController = MenuController.Instance;
+    }
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         switch(gameState)
         {
             case GameState.Play:
-                if(startPos == null && GameObject.FindGameObjectWithTag("Respawn"))
+                currentScene = (byte)SceneManager.GetActiveScene().buildIndex;
+                if (startPos == null && GameObject.FindGameObjectWithTag("Respawn"))
                 {
                     startPos = GameObject.FindGameObjectWithTag("Respawn").transform;
                 }
@@ -52,18 +63,20 @@ public class SceneMnger : MonoBehaviour
                 }
                 if (player == null && GameObject.FindGameObjectWithTag("Player"))
                 {
-                    player = GameObject.FindGameObjectWithTag("Player");
+                    player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
                 }
                 break;
             case GameState.Finish:
                 // get currentScene.
-                currentScene = (byte)SceneManager.GetActiveScene().buildIndex;
                 DontDestroyOnLoad(gameObject);
                 audioSource.PlayOneShot(finishSound);
 
                 // check if currentScene is out of range.
                 if(currentScene++ < SceneManager.sceneCountInBuildSettings)
                     SceneManager.LoadScene(currentScene++);
+                // check if this scene finish than unlock the next scene for menu controller.
+                UnlockMap();
+                gameState = GameState.Play;
                 break;
             case GameState.GameOver:
                 audioSource.PlayOneShot(gameOverSound);
@@ -84,5 +97,28 @@ public class SceneMnger : MonoBehaviour
         {
             gameState = GameState.Play;
         }
+    }
+
+    void UnlockMap()
+    {
+        byte currentScene;
+        byte nextScene;
+
+        // get current active scene.
+        currentScene = (byte)SceneManager.GetActiveScene().buildIndex;
+        nextScene = (byte)(currentScene + 1);
+
+        // check if the map is complete
+        if(menuController.Maps[currentScene] && nextScene < SceneManager.sceneCountInBuildSettings)
+        {
+            //unlock the next map.
+            menuController.SetBool(menuController.Maps[nextScene].name, true);
+        }
+        print("Unlocking Map");
+    }
+
+    public void LoadScene(int sceneIndex)
+    {
+        SceneManager.LoadScene(sceneIndex);
     }
 }
