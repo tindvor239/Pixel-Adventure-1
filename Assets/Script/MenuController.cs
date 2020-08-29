@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,13 +7,15 @@ public class MenuController : MonoBehaviour
 {
     [SerializeField] GameObject mainMenu;
     [SerializeField] GameObject chooseMaps;
+    [SerializeField] GameObject gameOverUI;
     [SerializeField] GameObject[] mapObjects = new GameObject[3];
     [SerializeField] Map[] maps = new Map[3];
     [SerializeField] Image[] map1Star = new Image[3];
     [SerializeField] Image[] map2Star = new Image[3];
     [SerializeField] Image[] map3Star = new Image[3];
+    bool isGameOver = false; // must have this boolean because don't have this gameoverUI will be alway active when player dead.
 
-    SceneMnger sceneManager;
+    SceneController sceneController;
     #region singleton
     public static MenuController Instance;
     void Awake()
@@ -29,8 +32,8 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        sceneManager = SceneMnger.instance;
-        sceneManager.gameState = SceneMnger.GameState.Pause;
+        sceneController = SceneController.instance;
+        sceneController.gameState = SceneController.GameState.Pause;
         SetBool(maps[0].name, true);
     }
 
@@ -45,10 +48,20 @@ public class MenuController : MonoBehaviour
         mapObjects[0].SetActive(!maps[0].isMapComplete);
         mapObjects[1].SetActive(!maps[1].isMapComplete);
         mapObjects[2].SetActive(!maps[2].isMapComplete);
-        /*
-        print("Map 1 Complete?: " + maps[0].isMapComplete);
-        print("Map 2 Complete?: " + maps[1].isMapComplete);
-        print("Map 3 Complete?: " + maps[2].isMapComplete);*/
+        
+        switch(sceneController.gameState)
+        {
+            // on game over set ui game over visible.
+            case SceneController.GameState.GameOver:
+                if (isGameOver == false)
+                    gameOverUI.SetActive(true);
+                else (isGameOver)
+                    gameOverUI.SetActive(false);
+                break;
+            default:
+                gameOverUI.SetActive(false);
+                break;
+        }
     }
     public void SetBool(string key, bool state)
     {
@@ -86,6 +99,21 @@ public class MenuController : MonoBehaviour
         return value;
     }
 
+    public void LoadMainMenuScene()
+    {
+        isGameOver = false;
+        mainMenu.SetActive(true);
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    public void ReplayCurrentMap()
+    {
+        sceneController.LoadScene(sceneController.CurrentScene);
+    }
 
     public void OpenChooseMapMenu()
     {
@@ -102,36 +130,36 @@ public class MenuController : MonoBehaviour
     {
         if(GetBool(maps[0].name))
         {
-            DontDestroyOnLoad(sceneManager);
+            DontDestroyOnLoad(sceneController);
             mainMenu.SetActive(false);
             chooseMaps.SetActive(false);
             DontDestroyOnLoad(gameObject);
-            sceneManager.CurrentMap = maps[0];
-            sceneManager.LoadScene(0);
+            sceneController.CurrentMap = maps[0];
+            sceneController.LoadScene(0);
         }
     }
     public void LoadMap2()
     {
         if (GetBool(maps[1].name))
         {
-            DontDestroyOnLoad(sceneManager);
+            DontDestroyOnLoad(sceneController);
             mainMenu.SetActive(false);
             chooseMaps.SetActive(false);
             DontDestroyOnLoad(gameObject);
-            sceneManager.CurrentMap = maps[1];
-            sceneManager.LoadScene(1);
+            sceneController.CurrentMap = maps[1];
+            sceneController.LoadScene(1);
         }
     }
     public void LoadMap3()
     {
         if (GetBool(maps[2].name))
         {
-            DontDestroyOnLoad(sceneManager);
+            DontDestroyOnLoad(sceneController);
             mainMenu.SetActive(false);
             chooseMaps.SetActive(false);
             DontDestroyOnLoad(gameObject);
-            sceneManager.CurrentMap = maps[2];
-            sceneManager.LoadScene(2);
+            sceneController.CurrentMap = maps[2];
+            sceneController.LoadScene(2);
         }
     }
 

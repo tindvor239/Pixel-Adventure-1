@@ -118,9 +118,9 @@ public class PlayerController : Controller
             Blinking(ref blinkTime, ref blinkCount, ref isBlink);
         }
         MovingAnimation(move);
-        switch(SceneMnger.instance.gameState)
+        switch(SceneController.instance.gameState)
         {
-            case SceneMnger.GameState.Finish:
+            case SceneController.GameState.Finish:
                 SetScore((byte)(score + Stats.HP));
                 break;
         }
@@ -196,7 +196,7 @@ public class PlayerController : Controller
         }
         else if (collision.gameObject.tag == "Finish")
         {
-            SceneMnger.instance.gameState = SceneMnger.GameState.Finish;
+            SceneController.instance.gameState = SceneController.GameState.Finish;
         }
         else if (collision.gameObject.tag == "Bullet" && canBeDamage)
         {
@@ -245,7 +245,7 @@ public class PlayerController : Controller
 
     void SetScore(byte score)
     {
-        MenuController.Instance.SetByte(MenuController.Instance.Maps[SceneMnger.instance.CurrentScene].name, " high score", score);
+        MenuController.Instance.SetByte(MenuController.Instance.Maps[SceneController.instance.CurrentScene].name, " high score", score);
         print(string.Format("===============================================\ncurrent score: {0}", score));
     }
 }

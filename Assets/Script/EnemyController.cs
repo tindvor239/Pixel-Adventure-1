@@ -31,8 +31,8 @@ public class EnemyController : Controller
         SwitchTarget();
         if (player == null)
         {
-            if(SceneMnger.instance.Player != null)
-                player = SceneMnger.instance.Player.transform;
+            if(SceneController.instance.Player != null)
+                player = SceneController.instance.Player.transform;
         }
         if (isPatrol)
         {
