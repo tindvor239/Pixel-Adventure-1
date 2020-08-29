@@ -13,7 +13,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] Image[] map1Star = new Image[3];
     [SerializeField] Image[] map2Star = new Image[3];
     [SerializeField] Image[] map3Star = new Image[3];
-    bool isGameOver = false; // must have this boolean because don't have this gameoverUI will be alway active when player dead.
+    [SerializeField]bool isGameOver = false; // must have this boolean because don't have this gameoverUI will be alway active when player dead.
 
     SceneController sceneController;
     #region singleton
@@ -33,6 +33,7 @@ public class MenuController : MonoBehaviour
     private void Start()
     {
         sceneController = SceneController.instance;
+        print(sceneController);
         sceneController.gameState = SceneController.GameState.Pause;
         SetBool(maps[0].name, true);
     }
@@ -55,10 +56,11 @@ public class MenuController : MonoBehaviour
             case SceneController.GameState.GameOver:
                 if (isGameOver == false)
                     gameOverUI.SetActive(true);
-                else (isGameOver)
+                else
                     gameOverUI.SetActive(false);
                 break;
             default:
+                isGameOver = false;
                 gameOverUI.SetActive(false);
                 break;
         }
@@ -101,7 +103,7 @@ public class MenuController : MonoBehaviour
 
     public void LoadMainMenuScene()
     {
-        isGameOver = false;
+        isGameOver = true;
         mainMenu.SetActive(true);
     }
 

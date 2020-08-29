@@ -49,22 +49,23 @@ public class SceneController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (startPos == null && GameObject.FindGameObjectWithTag("Respawn"))
+        {
+            startPos = GameObject.FindGameObjectWithTag("Respawn").transform;
+        }
+        if(finishPos == null && GameObject.FindGameObjectWithTag("Finish"))
+        {
+            finishPos = GameObject.FindGameObjectWithTag("Finish").transform;
+        }
+        if (player == null && GameObject.FindGameObjectWithTag("Player"))
+        {
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        }
+
         switch(gameState)
         {
             case GameState.Play:
                 currentScene = (byte)SceneManager.GetActiveScene().buildIndex;
-                if (startPos == null && GameObject.FindGameObjectWithTag("Respawn"))
-                {
-                    startPos = GameObject.FindGameObjectWithTag("Respawn").transform;
-                }
-                if(finishPos == null && GameObject.FindGameObjectWithTag("Finish"))
-                {
-                    finishPos = GameObject.FindGameObjectWithTag("Finish").transform;
-                }
-                if (player == null && GameObject.FindGameObjectWithTag("Player"))
-                {
-                    player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-                }
                 break;
             case GameState.Finish:
                 // get currentScene.
@@ -86,9 +87,13 @@ public class SceneController : MonoBehaviour
         }
 
         // if player don't exist in the scene => gameover.
-        if(player == null && gameState == GameState.Play)
+        if (player == null && gameState == GameState.Play)
         {
             gameState = GameState.GameOver;
+        }
+        else if(gameState == GameState.GameOver && player != null)
+        {
+            gameState = GameState.Pause;
         }
 
         // if in menu (pause) state find game object with tag if NOT null switch state to play.

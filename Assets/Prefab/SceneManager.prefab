@@ -41,13 +41,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1205756994099271361}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7eb1607f5a167ad48a945770881b2ede, type: 3}
+  m_Script: {fileID: 11500000, guid: e3479d0091da4714ebc40dbde8799ec6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startPos: {fileID: 0}
   finishPos: {fileID: 0}
   player: {fileID: 0}
-  sceneCount: 0
+  currentMap: {fileID: 0}
   finishSound: {fileID: 8300000, guid: a50b656c6f2fa3e42994cd0909d91faf, type: 3}
   gameOverSound: {fileID: 8300000, guid: 47a9ebc0dd5350240bbbdd06beaad05d, type: 3}
   gameState: 0

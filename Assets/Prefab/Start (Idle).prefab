@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7577409258233573086}
   - component: {fileID: 7577409258233573073}
   - component: {fileID: 7577409258233573084}
-  - component: {fileID: 8531378990268706357}
+  - component: {fileID: 1560114276897861404}
   m_Layer: 0
   m_Name: Start (Idle)
   m_TagString: Respawn
@@ -129,7 +129,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.34083042, y: 0.09050304}
   m_EdgeRadius: 0
---- !u!114 &8531378990268706357
+--- !u!114 &1560114276897861404
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,7 +138,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7577409258233573072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8169dc100da0cba41b2b0ea620e165eb, type: 3}
+  m_Script: {fileID: 11500000, guid: fb777c3dcd09e0f438249b1be3fe4cbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1926465707416939444, guid: 71a60d5591ab89447b5dbdce94df2a4c, type: 3}
+  spawnObject: {fileID: 1926465707416939444, guid: 71a60d5591ab89447b5dbdce94df2a4c,
+    type: 3}
+  spawnOffset: {x: 2, y: 2}
