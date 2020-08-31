@@ -53,7 +53,7 @@ public class Controller : MonoBehaviour
 
     public virtual void Update()
     {
-        isGrounded = feet.IsGrounded;
+        isGrounded = feet.IsHit;
     }
     public void Turning(float move)
     {

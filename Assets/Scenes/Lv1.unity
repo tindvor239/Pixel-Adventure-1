@@ -7746,6 +7746,38 @@ Transform:
   m_Father: {fileID: 1255183004}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1910338229 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7356528545073471749, guid: 65a2e24d6bd3e374ea115e4d90baf9b8,
+    type: 3}
+  m_PrefabInstance: {fileID: 7356528544530949299}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1910338230
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910338229}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.020084262, y: 0.16543078}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.32, y: 0.32}
+    newSize: {x: 0.32, y: 0.32}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.40684628, y: 0.23437738}
+  m_EdgeRadius: 0
 --- !u!1 &2044113632
 GameObject:
   m_ObjectHideFlags: 0
@@ -8558,6 +8590,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7653814928426235922, guid: 075b86851ced8a344b71164312192583,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 11.700012
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 075b86851ced8a344b71164312192583, type: 3}
 --- !u!1001 &6339194594888022876
@@ -8715,6 +8752,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 725207495}
+    - target: {fileID: 727296454, guid: 65a2e24d6bd3e374ea115e4d90baf9b8, type: 3}
+      propertyPath: beenHitForce
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7356528545073471749, guid: 65a2e24d6bd3e374ea115e4d90baf9b8,
         type: 3}
       propertyPath: m_Name

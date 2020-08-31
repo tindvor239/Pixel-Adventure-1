@@ -2,77 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Feet : MonoBehaviour
+public class Feet : HitChecker
 {
-    [SerializeField] bool isOnEnemy;
-    private bool isGrounded = false;
-    [SerializeField] float distance;
+    [SerializeField] bool isHitEnemy;
     private GameObject enemy;
-    private Controller characterController;
     private PlayerController playerController;
 
+    #region Properties
+    public GameObject Enemy
+    {
+        get { return enemy; }
+    }
+    public bool IsHitEnemy
+    {
+        get { return isHitEnemy; }
+    }
+    #endregion
     private void Start()
     {
-        characterController = GetComponentInParent<Controller>();
+        // to get player behavior
         if(GetComponentInParent<PlayerController>() != null)
         {
             playerController = GetComponentInParent<PlayerController>();
         }
     }
 
-    private void Update()
-    {
-        isGrounded = OnTerrain();
-
-        if(playerController != null)
-        {
-            //isOnEnemy = OnEnemy();
-        }
-    }
-
-    public GameObject Enemy
-    {
-        get { return enemy; }
-        set { enemy = value; }
-    }
-    public bool IsOnEnemy
-    {
-        get { return isOnEnemy; }
-        set { isOnEnemy = value; }
-    }
-
-    public bool IsGrounded
-    {
-        get { return isGrounded; }
-    }
-
-    bool OnTerrain()
-    {
-        Debug.DrawRay(transform.position, -transform.up, Color.red, distance);
-        if (Physics2D.Raycast(transform.position, -transform.up, distance, LayerMask.GetMask("Terrain")))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
+    #region Enemy Hit Detect
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Enemy" && playerController.CanBeDamage)
+        if (collision.gameObject.tag == "Enemy" && playerController.CanBeDamage) // player can be damage following hit delay time.
         {
-            isOnEnemy = true;
+            Debug.Log(string.Format("Player hit enemy at: {0}", Time.time));
+            isHitEnemy = true;
             enemy = collision.gameObject;
         }
     }
-    /*
     void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy" && playerController.CanBeDamage)
         {
-            isOnEnemy = false;
+            isHitEnemy = false;
         }
-    }*/
+    }
+    #endregion
 }

@@ -9,8 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 930628347}
-  - component: {fileID: 8654479938257774551}
-  - component: {fileID: 1074159889}
+  - component: {fileID: 216117470}
   m_Layer: 0
   m_Name: Side
   m_TagString: GameController
@@ -26,13 +25,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 930628346}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.086, y: -0.062, z: 0}
+  m_LocalPosition: {x: 0.086, y: -0.042, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1926465707416939441}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8654479938257774551
+--- !u!114 &216117470
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,26 +40,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 930628346}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8116a4e0cfacde408c9dfccacbc1aff, type: 3}
+  m_Script: {fileID: 11500000, guid: b510bee7c16905d48b8da35d53a44768, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 0.5
---- !u!70 &1074159889
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 930628346}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.00979048, y: -0.00742501}
-  m_Size: {x: 0.03797996, y: 0.104551554}
-  m_Direction: 0
+  radius: 0.02
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 256
+  isHit: 0
 --- !u!1 &1378901622
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,10 +58,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1378901623}
   - component: {fileID: 1378901625}
-  - component: {fileID: 143946838289420712}
+  - component: {fileID: 103031922}
   m_Layer: 0
   m_Name: Feet
-  m_TagString: GameController
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105,10 +92,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a245887dded63a540bcbc9bd8a7a06ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnEnemy: 0
-  distance: 0.5
---- !u!58 &143946838289420712
-CircleCollider2D:
+  radius: 0.21
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 256
+  isHit: 0
+  isHitEnemy: 0
+--- !u!61 &103031922
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -120,9 +111,19 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.0070081204}
+  m_Offset: {x: 0.00026476383, y: -0.16787797}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.03404274
+  m_Size: {x: 0.5328386, y: 0.38630724}
+  m_EdgeRadius: 0
 --- !u!1 &1926465707416939444
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +228,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.041941166}
-  m_Size: {x: 0.15141785, y: 0.22353983}
+  m_Size: {x: 0.17438756, y: 0.22353983}
   m_Direction: 0
 --- !u!95 &1926465707416939440
 Animator:
@@ -285,7 +286,7 @@ MonoBehaviour:
   jumpSpeed: 8
   isGrounded: 0
   feet: {fileID: 1378901625}
-  side: {fileID: 8654479938257774551}
+  side: {fileID: 216117470}
   canBeDamage: 0
   currentHitDelay: 1
   healthBar: {fileID: 0}
@@ -293,9 +294,9 @@ MonoBehaviour:
   jumpSound: {fileID: 8300000, guid: 08b3f17a51f7e184795f401851342c7d, type: 3}
   movingSound: {fileID: 8300000, guid: a5441d076939d554b92fa60ab46769fd, type: 3}
   hitSound: {fileID: 8300000, guid: 46b70a75d62459a4fab909c0af0fdef1, type: 3}
-  deathSound: {fileID: 8300000, guid: 47a9ebc0dd5350240bbbdd06beaad05d, type: 3}
-  finishSound: {fileID: 8300000, guid: a50b656c6f2fa3e42994cd0909d91faf, type: 3}
   eatFruitSound: {fileID: 8300000, guid: 66852431e1babd74b828f9b901e038be, type: 3}
+  enemy: {fileID: 0}
+  wallSlidingSpeed: 5
 --- !u!114 &1926465708625682335
 MonoBehaviour:
   m_ObjectHideFlags: 0
