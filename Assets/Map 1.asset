@@ -12,8 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca1a2ad97e9c8334ba4d178b9697ac24, type: 3}
   m_Name: Map 1
   m_EditorClassIdentifier: 
-  star: 0
-  isMapComplete: 1
   name: Map 1
-  starPoint: 010203
-  highScore: 0
+  starPoint: 050f17

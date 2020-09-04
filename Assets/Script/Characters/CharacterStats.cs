@@ -3,9 +3,9 @@ using UnityEngine.UI;
 
 public class CharacterStats : MonoBehaviour
 {
-    [SerializeField] private int hp;
-    [SerializeField] private int maxHp;
-    [SerializeField] private int damage;
+    [SerializeField] private sbyte hp;
+    [SerializeField] private sbyte maxHp;
+    [SerializeField] private sbyte damage;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,18 +29,18 @@ public class CharacterStats : MonoBehaviour
         }
     }
 
-    public int HP
+    public sbyte HP
     {
         get { return hp; }
         set { hp = value; }
     }
 
-    public int MaxHp
+    public sbyte MaxHp
     {
         get { return maxHp; }
     }
 
-    public int Damage
+    public sbyte Damage
     {
         get { return damage; }
     }

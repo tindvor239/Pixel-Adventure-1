@@ -43,8 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a245887dded63a540bcbc9bd8a7a06ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnEnemy: 0
-  distance: 3.58
+  radius: 0
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 0
+  isHit: 0
+  isHitEnemy: 0
 --- !u!1 &7722172321752704727
 GameObject:
   m_ObjectHideFlags: 0
@@ -59,6 +63,7 @@ GameObject:
   - component: {fileID: 7722172321752704712}
   - component: {fileID: 7722172321752704715}
   - component: {fileID: 7722172321752704713}
+  - component: {fileID: 178594764}
   m_Layer: 0
   m_Name: Pink Guy
   m_TagString: Enemy
@@ -212,11 +217,26 @@ MonoBehaviour:
   destinations:
   - {fileID: 7722172322221917908}
   - {fileID: 7722172322886990928}
-  beenHitForce: 15
-  bullet: {fileID: 0}
-  bulletSpeed: 100
+  beenHitForce: 10
+  bullet: {fileID: 9133438097686532706, guid: 5e4da4b544e1fee488fcf121b0bd0a71, type: 3}
+  bulletSpeed: 2
   healthBar: {fileID: 0}
-  shootTime: 2
+  shootTime: 5
+--- !u!114 &178594764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7722172321752704727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34638c4e52067204a97d4180bbaf725a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 0
+  maxHp: 50
+  damage: 5
 --- !u!1 &7722172322221917911
 GameObject:
   m_ObjectHideFlags: 0

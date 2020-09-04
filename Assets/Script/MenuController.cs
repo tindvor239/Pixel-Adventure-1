@@ -1,22 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
+    #region UI Objects
     [SerializeField] GameObject mainMenu;
     [SerializeField] GameObject chooseMaps;
     [SerializeField] GameObject gameOverUI;
-    [SerializeField] GameObject[] mapObjects = new GameObject[3];
-    [SerializeField] Map[] maps = new Map[3];
-    [SerializeField] Image[] map1Star = new Image[3];
-    [SerializeField] Image[] map2Star = new Image[3];
-    [SerializeField] Image[] map3Star = new Image[3];
-    [SerializeField]bool isGameOver = false; // must have this boolean because don't have this gameoverUI will be alway active when player dead.
+    [SerializeField] GameObject mapInfoUI;
+    #endregion
 
+    #region Map Objects.
+    static sbyte limitMapRange = 3;
+    // Scriptable Object Maps.
+    [SerializeField] Map[] maps = new Map[limitMapRange];
+    // Map UI.
+    /**** Stars Images ****/
+    [SerializeField] Image[] map1Star = new Image[limitMapRange];
+    [SerializeField] Image[] map2Star = new Image[limitMapRange];
+    [SerializeField] Image[] map3Star = new Image[limitMapRange];
+    /**** Lock ****/
+    [SerializeField] GameObject[] mapLocks = new GameObject[limitMapRange];
+    
+    List<Image[]> listImages = new List<Image[]>();
+    MapUI[] mapUIs = new MapUI[limitMapRange];
+
+    // Map Info.
+    [SerializeField] Image[] mapInfoStars = new Image[limitMapRange];
+    [SerializeField] GameObject newScore;
+    [SerializeField] Text highScore;
+    [SerializeField] Text score;
+    [SerializeField] Text scoreMore;
+    [SerializeField] GameObject mainMenuButton;
+    [SerializeField] GameObject nextMapButton;
+
+    float time = 0;
+
+    MapInfo mapInfo = new MapInfo();
+    #endregion
+
+    #region Boss Map UI
+    [SerializeField] Text timer;
+    #endregion
+
+    //
+    [SerializeField] bool isGameOver = false; // must have this boolean because don't have this gameoverUI will be alway active when player dead.
     SceneController sceneController;
-    #region singleton
+
+    #region Singleton
     public static MenuController Instance;
     void Awake()
     {
@@ -32,79 +64,107 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        // Map Declaration.
+        listImages.Add(map1Star);
+        listImages.Add(map2Star);
+        listImages.Add(map3Star);
+        
+        PlayerPrefs.SetInt(string.Format("is{0}Complete", Maps[0].name), 1); // for map1 alway unlock.
+        for(int index = 0; index < maps.Length; index++)
+        {
+            maps[index] = new Map(listImages[index], maps[index].starPoint, maps[index].name, maps[index].type, maps[index].time);
+        }
+        for (int index = 0; index < mapUIs.Length; index++)
+        {
+            mapUIs[index] = new MapUI(mapLocks[index], maps[index]);
+        }
+
+        mapInfo = new MapInfo(mapInfoStars, newScore, highScore, score, scoreMore);
+        // Scence Controller Declaration.
         sceneController = SceneController.instance;
-        print(sceneController);
         sceneController.gameState = SceneController.GameState.Pause;
-        SetBool(maps[0].name, true);
+        
     }
 
     private void Update()
     {
-        // Get and set scene.
-        GetMapInfo(0);
-        GetMapInfo(1);
-        GetMapInfo(2);
-        GetMapStar();
-
-        mapObjects[0].SetActive(!maps[0].isMapComplete);
-        mapObjects[1].SetActive(!maps[1].isMapComplete);
-        mapObjects[2].SetActive(!maps[2].isMapComplete);
-        
-        switch(sceneController.gameState)
+        timer.gameObject.SetActive(false);
+        switch (sceneController.gameState)
         {
+            case SceneController.GameState.Play:
+                switch(maps[sceneController.CurrentScene].type)
+                {
+                    case Map.Type.Boss:
+                        time += Time.deltaTime;
+                        timer.gameObject.SetActive(true);
+                        timer.text = time.ToString("0.0");
+                        break;
+                    default:
+                        time = 0;
+                        break;
+                }
+                isGameOver = false;
+                mapInfoUI.SetActive(false);
+                gameOverUI.SetActive(false);
+                break;
             // on game over set ui game over visible.
             case SceneController.GameState.GameOver:
                 if (isGameOver == false)
                     gameOverUI.SetActive(true);
                 else
                     gameOverUI.SetActive(false);
+                mapInfoUI.SetActive(false);
+                break;
+            case SceneController.GameState.Finish:
+                sbyte score;
+                sbyte timerScore = 0;
+                
+                mapInfoUI.SetActive(true);
+                // next scene is NOT out of range.
+                if(sceneController.CurrentScene + 1 < sceneController.SceneCount - 1) // NOT COUNT main menu scene.
+                {
+                    nextMapButton.SetActive(true);
+                    mainMenuButton.SetActive(false);
+
+                    // Unlock next map.
+                    if(maps[sceneController.CurrentScene + 1] != null && maps[sceneController.CurrentScene + 1].IsMapComplete == false)
+                    {
+                        if(maps[sceneController.CurrentScene].IsMapComplete)
+                        {
+                            maps[sceneController.CurrentScene + 1].IsMapComplete = true;
+                        }
+                    }
+                }
+                else
+                {
+                    nextMapButton.SetActive(false);
+                    mainMenuButton.SetActive(true);
+                }
+
+                // if in boss map.
+                if(maps[sceneController.CurrentScene].type == Map.Type.Boss)
+                {
+                    timerScore = (sbyte)(maps[sceneController.CurrentScene].time - float.Parse(timer.text));
+
+                }
+                score = (sbyte)(timerScore + sceneController.Player.Score + sceneController.Player.Stats.HP);
+                mapInfo.SetMapInfo(maps[sceneController.CurrentScene], score);
                 break;
             default:
                 isGameOver = false;
+                mapInfoUI.SetActive(false);
                 gameOverUI.SetActive(false);
                 break;
         }
     }
-    public void SetBool(string key, bool state)
-    {
-        PlayerPrefs.SetInt(key, state ? 1 : 0);
-    }
-    public void SetByte(string mapName, string valueName, byte value)
-    {
-        PlayerPrefs.SetInt(mapName + valueName, value);
-    }
-    bool GetBool(string mapName)
-    {
-        int value = 0;
-        if (PlayerPrefs.HasKey(mapName))
-        {
-            value = PlayerPrefs.GetInt(mapName);
-            if(value == 1)
-            {
-                return true;
-            }
-        }
-        else
-        {
-            print("key you input: " + mapName + " don't have any!.");
-            SetBool(mapName, false);
-        }
-        return false;
-    }
-    byte GetByte(string mapName, string valueName)
-    {
-        byte value = 0;
-        if(PlayerPrefs.HasKey(mapName))
-        {
-            value = (byte)PlayerPrefs.GetInt(mapName + valueName);
-        }
-        return value;
-    }
 
+    #region Button Behaviors
     public void LoadMainMenuScene()
     {
         isGameOver = true;
+        sceneController.gameState = SceneController.GameState.Pause;
         mainMenu.SetActive(true);
+        mapInfoUI.SetActive(false);
     }
 
     public void Quit()
@@ -117,121 +177,80 @@ public class MenuController : MonoBehaviour
         sceneController.LoadScene(sceneController.CurrentScene);
     }
 
-    public void OpenChooseMapMenu()
+    public void PlayNextMap()
     {
-        chooseMaps.SetActive(true);
-        mainMenu.SetActive(false);
-    }
-    public void CloseChooseMapMenu()
-    {
-        chooseMaps.SetActive(false);
-        mainMenu.SetActive(true);
+        sceneController.LoadScene(sceneController.CurrentScene + 1);
     }
 
-    public void LoadMap1()
+    public void CloseUI(GameObject closeUI)
     {
-        if(GetBool(maps[0].name))
+        closeUI.SetActive(false);
+    }
+    public void OpenUI(GameObject openUI)
+    {
+        openUI.SetActive(true);
+    }
+    public void LoadMap(int mapIndex)
+    {
+        if(maps[mapIndex].IsMapComplete)
         {
             DontDestroyOnLoad(sceneController);
             mainMenu.SetActive(false);
             chooseMaps.SetActive(false);
             DontDestroyOnLoad(gameObject);
-            sceneController.CurrentMap = maps[0];
-            sceneController.LoadScene(0);
+            sceneController.LoadScene(mapIndex);
         }
     }
-    public void LoadMap2()
-    {
-        if (GetBool(maps[1].name))
-        {
-            DontDestroyOnLoad(sceneController);
-            mainMenu.SetActive(false);
-            chooseMaps.SetActive(false);
-            DontDestroyOnLoad(gameObject);
-            sceneController.CurrentMap = maps[1];
-            sceneController.LoadScene(1);
-        }
-    }
-    public void LoadMap3()
-    {
-        if (GetBool(maps[2].name))
-        {
-            DontDestroyOnLoad(sceneController);
-            mainMenu.SetActive(false);
-            chooseMaps.SetActive(false);
-            DontDestroyOnLoad(gameObject);
-            sceneController.CurrentMap = maps[2];
-            sceneController.LoadScene(2);
-        }
-    }
+    #endregion
+}
 
-    void GetMapInfo(byte mapIndex)
+struct MapUI
+{
+    private Map map;
+    private GameObject lockImage;
+    public MapUI(GameObject lockImage, Map map)
     {
-        maps[mapIndex].isMapComplete = GetBool(maps[mapIndex].name);
-        maps[mapIndex].star = GetByte(maps[mapIndex].name, " star");
-        maps[mapIndex].highScore = GetByte(maps[mapIndex].name, " high score");
-        SetByte(maps[mapIndex].name, string.Format(" starPoint {0}", mapIndex), maps[mapIndex].starPoint[0]);
-        SetByte(maps[mapIndex].name, string.Format(" starPoint {0}", mapIndex), maps[mapIndex].starPoint[1]);
-        SetByte(maps[mapIndex].name, string.Format(" starPoint {0}", mapIndex), maps[mapIndex].starPoint[2]);
+        this.lockImage = lockImage;
+        this.map = map;
+        lockImage.SetActive(!map.IsMapComplete);
     }
+}
+struct MapInfo
+{
+    public Image[] starImages;
+    public GameObject newHighScore;
+    public Text highScore;
+    public Text score;
+    public Text scoreMore;
 
-    void GetMapStar()
+    public MapInfo(Image[] starImages, GameObject newHighScore, Text highScore, Text score, Text scoreMore)
     {
-        if(maps[0].highScore >= maps[0].starPoint[0])
+        this.starImages = starImages;
+        this.newHighScore = newHighScore;
+        this.highScore = highScore;
+        this.score = score;
+        this.scoreMore = scoreMore;
+    }
+    public void SetMapInfo(Map currentMap, sbyte score)
+    {
+        string scoreMoreString;
+        
+        if(score >= currentMap.HighScore)
         {
-            map1Star[0].color = Color.yellow;
-            if (maps[0].highScore >= maps[0].starPoint[1])
-            {
-                map1Star[1].color = Color.yellow;
-                if (maps[0].highScore >= maps[0].starPoint[2])
-                    map1Star[2].color = Color.yellow;
-                else
-                    map1Star[2].color = Color.white;
-            }
-            else
-                map1Star[1].color = Color.white;
+            PlayerPrefs.SetInt(string.Format("{0} highScore", currentMap.name), score);
+            newHighScore.SetActive(true);
+            scoreMore.color = Color.yellow;
+            scoreMoreString = "Congrats! you have beat the last highScore.";
         }
         else
-            map1Star[0].color = Color.white;
-
-        if (maps[1].highScore >= maps[1].starPoint[0])
         {
-            map2Star[0].color = Color.yellow;
-            if (maps[1].highScore >= maps[1].starPoint[1])
-            {
-                map2Star[1].color = Color.yellow;
-                if (maps[1].highScore >= maps[1].starPoint[2])
-                    map2Star[2].color = Color.yellow;
-                else
-                    map2Star[2].color = Color.white;
-            }
-            else
-                map2Star[1].color = Color.white;
+            newHighScore.SetActive(false);
+            scoreMore.color = Color.red;
+            scoreMoreString = string.Format("{0} score more. C'mon, you can do it!.", (currentMap.HighScore - score).ToString());
         }
-        else
-            map2Star[0].color = Color.white;
-
-        if (maps[2].highScore >= maps[2].starPoint[0])
-        {
-            map3Star[0].color = Color.yellow;
-            if (maps[2].highScore >= maps[2].starPoint[1])
-            {
-                map3Star[1].color = Color.yellow;
-                if (maps[2].highScore >= maps[2].starPoint[2])
-                    map3Star[2].color = Color.yellow;
-                else
-                    map3Star[2].color = Color.white;
-            }
-            else
-                map3Star[1].color = Color.white;
-        }
-        else
-            map3Star[0].color = Color.white;/*
-        print(string.Format("Map 1: {0}", maps[0]));
-        print(string.Format("high score: {0}\n --------------------------------------------------", maps[0].highScore));
-        print(string.Format("Map 2: {0}", maps[1]));
-        print(string.Format("high score: {0}\n --------------------------------------------------", maps[1].highScore));
-        print(string.Format("Map 3: {0}", maps[2]));
-        print(string.Format("high score: {0}\n --------------------------------------------------", maps[2].highScore));*/
+        highScore.text = string.Format("High Score: {0}", currentMap.HighScore.ToString());
+        this.score.text = string.Format("Your Score: {0}", score.ToString());
+        scoreMore.text = scoreMoreString;
+        currentMap.SetStar(starImages, score);
     }
 }

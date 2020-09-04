@@ -46,4 +46,4 @@ MonoBehaviour:
   spawnObject: {fileID: 4749009251585358411, guid: 7dd0ce8286d02aa47ae36dfea72f0e14,
     type: 3}
   spawnOffset: {x: 0, y: 0}
-  spawnTime: 2
+  spawnTime: 10

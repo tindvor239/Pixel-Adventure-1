@@ -13,18 +13,24 @@ public class PlayerController : Controller
     [SerializeField] AudioClip hitSound;
     [SerializeField] AudioClip eatFruitSound;
     [SerializeField] EnemyController enemy;
-
+    
     // Action Behaviors.
     [SerializeField]  float wallSlidingSpeed;
     bool isWallSliding;
 
-    byte score;
+    sbyte score;
     float hitDelay;
     bool isBlinking = false;
     float blinkTime = 0.2f;
     int blinkCount = 0;
     bool isBlink = true;
 
+    #region Properties
+    public sbyte Score
+    {
+        get { return score; }
+    }
+    #endregion
     private void Awake()
     {
         hitDelay = currentHitDelay;
@@ -34,9 +40,8 @@ public class PlayerController : Controller
     public override void Start()
     {
         base.Start();
-
         // Check game object healthbar.
-        if(GameObject.FindGameObjectWithTag("PlayerHealth") != null)
+        if (GameObject.FindGameObjectWithTag("PlayerHealth") != null)
         {
             GameObject healthBarObj = GameObject.FindGameObjectWithTag("PlayerHealth");
             healthBar = healthBarObj.GetComponent<Slider>();
@@ -79,7 +84,7 @@ public class PlayerController : Controller
         if (IsGrounded) // if when you wall sliding and touch the ground it will cancel wall sliding.
         {
             // somehow disable side object for more reasonable.
-            // becuz when character hit the ground and still sliding wall.
+            // becuz when character hit the ground and still sliding wall character will keep sliding instead switch to ground state.
             // then solution is enable gameobject and disable.
             side.gameObject.SetActive(false);
             side.IsHit = false;
@@ -88,11 +93,10 @@ public class PlayerController : Controller
         {
             side.gameObject.SetActive(true);
         }
-        Debug.Log(string.Format("Feet is hit enemy: {0} at {1}.", feet.IsHitEnemy, Time.time));
         if (feet.IsHitEnemy)
         {
             // when hit enemy add force up.
-            Rigidbody.AddForce(transform.up * enemy.BeenHitForce, ForceMode2D.Impulse);
+            Rigidbody.AddForce(transform.up * feet.Enemy.BeenHitForce, ForceMode2D.Impulse);
             if (currentHitDelay <= 0.0f)
             {
                 if(feet.Enemy.gameObject.GetComponent<EnemyController>())
@@ -113,14 +117,9 @@ public class PlayerController : Controller
         {
             Blinking(ref blinkTime, ref blinkCount, ref isBlink);
         }
-        switch(SceneController.instance.gameState)
-        {
-            case SceneController.GameState.Finish:
-                SetScore((byte)(score + Stats.HP));
-                break;
-        }
     }
 
+    #region Movement Handler
     private void Move()
     {
         float velocityX;
@@ -177,7 +176,20 @@ public class PlayerController : Controller
             }
         }
     }
-
+    #endregion
+    #region Can Be Damage Handler
+    public bool CanBeDamage
+    {
+        get { return canBeDamage = GetCanBeDamage(); }
+    }
+    bool GetCanBeDamage()
+    {
+        return isBlinking == false ? true : false;
+    }
+    public void SetCanBeDamage(bool value)
+    {
+        isBlinking = value;
+    }
     void Blinking(ref float blinkTime, ref int blinkCount, ref bool isBlink)
     {
         blinkTime -= Time.deltaTime;
@@ -199,7 +211,8 @@ public class PlayerController : Controller
             isBlinking = false;
         }
     }
-    
+    #endregion
+    #region Collider Handler
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Item")
@@ -223,31 +236,13 @@ public class PlayerController : Controller
             Stats.HP -= 5;
         }
     }
-    
-    public bool CanBeDamage
-    {
-        get { return canBeDamage = GetCanBeDamage(); }
-    }
-    #region Can Be Damage Handler
-    bool GetCanBeDamage()
-    {
-        if (isBlinking == false)
-            return true;
-        else
-            return false;
-    }
-    public void SetCanBeDamage(bool value)
-    {
-        isBlinking = value;
-    }
-    #endregion
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Trap" && canBeDamage)
         {
-            Destroy(gameObject);
+            Stats.HP = 0;
         }
-        else if (collision.gameObject.tag == "Enemy" && canBeDamage)
+        else if (collision.gameObject.tag == "Enemy" && canBeDamage && feet.IsHitEnemy == false)
         {
             score += 2;
             enemy = collision.gameObject.GetComponent<EnemyController>();
@@ -258,10 +253,5 @@ public class PlayerController : Controller
             Stats.HP -= enemy.Stats.Damage;
         }
     }
-
-    void SetScore(byte score)
-    {
-        MenuController.Instance.SetByte(MenuController.Instance.Maps[SceneController.instance.CurrentScene].name, " high score", score);
-        print(string.Format("===============================================\ncurrent score: {0}", score));
-    }
+    #endregion
 }

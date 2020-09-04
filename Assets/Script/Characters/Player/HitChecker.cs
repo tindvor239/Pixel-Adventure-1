@@ -40,6 +40,5 @@ public class HitChecker : MonoBehaviour
     void HitCheck()
     {
         isHit = Physics2D.OverlapCircle(transform.position, radius, hitMask);
-        Debug.Log(string.Format("game object name '{1}' is '{0}' to hit", isHit, gameObject.name));
     }
 }

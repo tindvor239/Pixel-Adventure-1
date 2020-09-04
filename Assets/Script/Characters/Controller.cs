@@ -35,8 +35,6 @@ public class Controller : MonoBehaviour
     {
         get { return rigidbody; }
     }
-
-
     public CharacterStats Stats
     {
         get { return stats; }
@@ -61,7 +59,6 @@ public class Controller : MonoBehaviour
         {
             transform.right = new Vector2(rigidbody.velocity.x, 0);
         }
-
     }
 
     public void MovingAnimation(float move)

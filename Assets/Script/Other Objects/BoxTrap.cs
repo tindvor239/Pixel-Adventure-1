@@ -26,9 +26,10 @@ public class BoxTrap : MonoBehaviour
         {
             if(transform.position.y > collision.transform.position.y && Mathf.Abs(transform.position.x - collision.transform.position.x) <= xOffset)
             {
-                if(collision.gameObject.GetComponent<PlayerController>().CanBeDamage)
+                PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+                if (player.CanBeDamage)
                 {
-                    Destroy(collision.gameObject);
+                    player.Stats.HP = 0;
                 }
             }
         }

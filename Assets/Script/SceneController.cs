@@ -3,16 +3,14 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    [SerializeField] Transform startPos;
-    [SerializeField] Transform finishPos;
     [SerializeField] PlayerController player;
-    [SerializeField] Map currentMap;
-    byte currentScene = 0;
+    [SerializeField] MenuController menuController;
+    [SerializeField] BossController boss;
+    sbyte currentScene = 0;
 
     // Audio Section.
     [SerializeField] AudioClip finishSound;
     [SerializeField] AudioClip gameOverSound;
-    MenuController menuController;
     AudioSource audioSource;
 
     public GameState gameState;
@@ -31,97 +29,63 @@ public class SceneController : MonoBehaviour
         get { return player; }
     }
 
-    public byte CurrentScene
+    public sbyte CurrentScene
     {
         get { return currentScene; }
     }
 
-    public Map CurrentMap
+    public sbyte SceneCount
     {
-        get { return currentMap; }
-        set { currentMap = value; }
+        get { return (sbyte)SceneManager.sceneCountInBuildSettings; }
     }
     #endregion
     private void Start()
     {
         menuController = MenuController.Instance;
     }
+
+    private void OnLevelWasLoaded(int level)
+    {
+        if(level < SceneCount) // not count main menu
+        {
+            gameState = GameState.Play;
+            currentScene = (sbyte)SceneManager.GetActiveScene().buildIndex;
+            print(currentScene);
+            if(menuController.Maps[currentScene].type == Map.Type.Boss)
+            {
+                boss = GameObject.FindGameObjectWithTag("Enemy").GetComponent<BossController>();
+            }
+        }
+    }
     // Update is called once per frame
     private void Update()
     {
-        if (startPos == null && GameObject.FindGameObjectWithTag("Respawn"))
-        {
-            startPos = GameObject.FindGameObjectWithTag("Respawn").transform;
-        }
-        if(finishPos == null && GameObject.FindGameObjectWithTag("Finish"))
-        {
-            finishPos = GameObject.FindGameObjectWithTag("Finish").transform;
-        }
         if (player == null && GameObject.FindGameObjectWithTag("Player"))
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         }
 
-        switch(gameState)
+        switch (gameState)
         {
             case GameState.Play:
-                currentScene = (byte)SceneManager.GetActiveScene().buildIndex;
+                if(player.Stats.HP == 0)
+                {
+                    gameState = GameState.GameOver;
+                }
+
+                if(menuController.Maps[currentScene].type == Map.Type.Boss && boss.Stats.HP == 0)
+                {
+                    gameState = GameState.Finish;
+                }
                 break;
             case GameState.Finish:
-                // get currentScene.
-                DontDestroyOnLoad(gameObject);
                 audioSource.PlayOneShot(finishSound);
-
-                // check if currentScene is out of range.
-                if(currentScene++ < SceneManager.sceneCountInBuildSettings - 1) // becuz the last scene is MainMenu so it must -1
-                    SceneManager.LoadScene(currentScene++);
-                // check if this scene finish than unlock the next scene for menu controller.
-                UnlockMap();
-                gameState = GameState.Play;
                 break;
             case GameState.GameOver:
                 audioSource.PlayOneShot(gameOverSound);
                 break;
-            case GameState.Pause:
-                break;
-        }
-
-        // if player don't exist in the scene => gameover.
-        if (player == null && gameState == GameState.Play)
-        {
-            gameState = GameState.GameOver;
-        }
-        else if(gameState == GameState.GameOver && player != null)
-        {
-            gameState = GameState.Pause;
-        }
-
-        // if in menu (pause) state find game object with tag if NOT null switch state to play.
-        // to make it not switch to play when load map.
-        if(gameState == GameState.Pause && GameObject.FindGameObjectWithTag("Player") != null)
-        {
-            gameState = GameState.Play;
         }
     }
-
-    void UnlockMap()
-    {
-        byte currentScene;
-        byte nextScene;
-
-        // get current active scene.
-        currentScene = (byte)SceneManager.GetActiveScene().buildIndex;
-        nextScene = (byte)(currentScene + 1);
-
-        // check if the map is complete
-        if(menuController.Maps[currentScene] && nextScene < SceneManager.sceneCountInBuildSettings)
-        {
-            //unlock the next map.
-            menuController.SetBool(menuController.Maps[nextScene].name, true);
-        }
-        print("Unlocking Map");
-    }
-
     public void LoadScene(int sceneIndex)
     {
         SceneManager.LoadScene(sceneIndex);
