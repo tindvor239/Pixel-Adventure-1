@@ -13,7 +13,7 @@ public class PlayerController : Controller
     [SerializeField] AudioClip hitSound;
     [SerializeField] AudioClip eatFruitSound;
     [SerializeField] EnemyController enemy;
-    
+    SceneController sceneController;
     // Action Behaviors.
     [SerializeField]  float wallSlidingSpeed;
     bool isWallSliding;
@@ -35,10 +35,12 @@ public class PlayerController : Controller
     {
         hitDelay = currentHitDelay;
         audioSource = GetComponent<AudioSource>();
-        
+        Screen.SetResolution(1920, 1080, true, 30);
+
     }
     public override void Start()
     {
+        sceneController = SceneController.instance;
         base.Start();
         // Check game object healthbar.
         if (GameObject.FindGameObjectWithTag("PlayerHealth") != null)
@@ -56,66 +58,69 @@ public class PlayerController : Controller
     // Update is called once per frame
     public override void Update()
     {
-        base.Update();
-        Move();
-        #region Update values per frame
-        //Update behaviors of player.
-        isWallSliding = side.IsHit;
+        if (sceneController.gameState == SceneController.GameState.Play)
+        {
+            base.Update();
+            Move();
+            #region Update values per frame
+            //Update behaviors of player.
+            isWallSliding = side.IsHit;
 
-        //Update player damage behaviors
-        currentHitDelay -= Time.deltaTime;
-        canBeDamage = GetCanBeDamage();
+            //Update player damage behaviors
+            currentHitDelay -= Time.deltaTime;
+            canBeDamage = GetCanBeDamage();
 
-        //Update player stats to UI.
-        healthBar.value = Stats.HP;
-        #endregion
+            //Update player stats to UI.
+            healthBar.value = Stats.HP;
+            #endregion
 
-        if (isWallSliding == false && IsGrounded) // if you are not sliding and in the ground you can normal jump.
-        {
-            Jump();
-        }
-        else if (isWallSliding && IsGrounded == false) // if you are sliding and not touching the ground then jump like clamping the wall.
-        {
-            WallJump();
-        }
-        Animator.SetBool("isWallJump", isWallSliding);
-        Animator.SetBool("isJumping", !IsGrounded);
-        
-        if (IsGrounded) // if when you wall sliding and touch the ground it will cancel wall sliding.
-        {
-            // somehow disable side object for more reasonable.
-            // becuz when character hit the ground and still sliding wall character will keep sliding instead switch to ground state.
-            // then solution is enable gameobject and disable.
-            side.gameObject.SetActive(false);
-            side.IsHit = false;
-        }
-        else
-        {
-            side.gameObject.SetActive(true);
-        }
-        if (feet.IsHitEnemy)
-        {
-            // when hit enemy add force up.
-            Rigidbody.AddForce(transform.up * feet.Enemy.BeenHitForce, ForceMode2D.Impulse);
-            if (currentHitDelay <= 0.0f)
+            if (isWallSliding == false && IsGrounded) // if you are not sliding and in the ground you can normal jump.
             {
-                if(feet.Enemy.gameObject.GetComponent<EnemyController>())
-                {
-                    EnemyController enemy = feet.Enemy.gameObject.GetComponent<EnemyController>();
-                    enemy.Stats.HP -= Stats.Damage;
-                }
-                currentHitDelay = hitDelay;
+                Jump();
             }
-        }
+            else if (isWallSliding && IsGrounded == false) // if you are sliding and not touching the ground then jump like clamping the wall.
+            {
+                WallJump();
+            }
+            Animator.SetBool("isWallJump", isWallSliding);
+            Animator.SetBool("isJumping", !IsGrounded);
+        
+            if (IsGrounded) // if when you wall sliding and touch the ground it will cancel wall sliding.
+            {
+                // somehow disable side object for more reasonable.
+                // becuz when character hit the ground and still sliding wall character will keep sliding instead switch to ground state.
+                // then solution is enable gameobject and disable.
+                side.gameObject.SetActive(false);
+                side.IsHit = false;
+            }
+            else
+            {
+                side.gameObject.SetActive(true);
+            }
+            if (feet.IsHitEnemy)
+            {
+                // when hit enemy add force up.
+                Rigidbody.AddForce(transform.up * feet.Enemy.BeenHitForce, ForceMode2D.Impulse);
+                if (currentHitDelay <= 0.0f)
+                {
+                    if(feet.Enemy.gameObject.GetComponent<EnemyController>())
+                    {
+                        EnemyController enemy = feet.Enemy.gameObject.GetComponent<EnemyController>();
+                        enemy.Stats.HP -= Stats.Damage;
+                    }
+                    currentHitDelay = hitDelay;
+                }
+            }
 
-        if(isBlinking)
-        {
-            Rigidbody.AddForce(transform.up / 5f, ForceMode2D.Impulse);
-        }
+            if(isBlinking)
+            {
+                Rigidbody.AddForce(transform.up / 8f, ForceMode2D.Impulse);
+            }
 
-        if (isBlinking) // excecute blinking effect.
-        {
-            Blinking(ref blinkTime, ref blinkCount, ref isBlink);
+            if (isBlinking) // excecute blinking effect.
+            {
+                Blinking(ref blinkTime, ref blinkCount, ref isBlink);
+            }
         }
     }
 
@@ -166,14 +171,7 @@ public class PlayerController : Controller
             // jump sound.
             audioSource.PlayOneShot(jumpSound);
 
-            if(transform.eulerAngles.y >= 180)
-            {
-                Rigidbody.AddForce(new Vector2(transform.position.x + 40.0f, transform.position.y + 18.0f), ForceMode2D.Impulse);
-            }
-            else
-            {
-                Rigidbody.AddForce(new Vector2(transform.position.x - 40.0f, transform.position.y + 25.0f), ForceMode2D.Impulse);
-            }
+            Rigidbody.AddForce(new Vector2(30.0f * -Input.GetAxisRaw("Horizontal"), 10.0f), ForceMode2D.Impulse);
         }
     }
     #endregion
