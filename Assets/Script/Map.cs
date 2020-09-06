@@ -15,10 +15,10 @@ public class Map : ScriptableObject
     {
         get { return starImages; }
     }
-    public sbyte HighScore
+    public uint HighScore
     {
-        get { return (sbyte)PlayerPrefs.GetInt(string.Format("{0} highScore", name)); }
-        set { PlayerPrefs.SetInt(string.Format("{0} highScore", name), value); }
+        get { return (uint)PlayerPrefs.GetInt(string.Format("{0} highScore", name)); }
+        set { PlayerPrefs.SetInt(string.Format("{0} highScore", name), (int)value); }
     }
     public bool IsMapComplete
     {
@@ -37,7 +37,7 @@ public class Map : ScriptableObject
         SetStar(starImages, HighScore);
     }
 
-    public void SetStar(Image[] starImages, sbyte score)
+    public void SetStar(Image[] starImages, uint score)
     {
         if (starImages != null)
         {

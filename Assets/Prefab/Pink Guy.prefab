@@ -46,7 +46,7 @@ MonoBehaviour:
   radius: 0
   hitMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   isHit: 0
   isHitEnemy: 0
 --- !u!1 &7722172321752704727
@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa68a051a298c149bc09f9ef5538d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 200
+  moveSpeed: 400
   jumpSpeed: 0
   isGrounded: 0
   feet: {fileID: 0}

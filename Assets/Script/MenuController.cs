@@ -22,7 +22,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] Image[] map3Star = new Image[limitMapRange];
     /**** Lock ****/
     [SerializeField] GameObject[] mapLocks = new GameObject[limitMapRange];
-    
+
     List<Image[]> listImages = new List<Image[]>();
     MapUI[] mapUIs = new MapUI[limitMapRange];
 
@@ -64,16 +64,14 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        //PlayerPrefs.DeleteAll();
         // Map Declaration.
         listImages.Add(map1Star);
         listImages.Add(map2Star);
         listImages.Add(map3Star);
-        
+
         PlayerPrefs.SetInt(string.Format("is{0}Complete", Maps[0].name), 1); // for map1 alway unlock.
-        for(int index = 0; index < maps.Length; index++)
-        {
-            maps[index] = new Map(listImages[index], maps[index].starPoint, maps[index].name, maps[index].type, maps[index].time);
-        }
+        
         for (int index = 0; index < mapUIs.Length; index++)
         {
             mapUIs[index] = new MapUI(mapLocks[index], maps[index]);
@@ -83,7 +81,7 @@ public class MenuController : MonoBehaviour
         // Scence Controller Declaration.
         sceneController = SceneController.instance;
         sceneController.gameState = SceneController.GameState.Pause;
-        
+
     }
 
     private void Update()
@@ -92,7 +90,7 @@ public class MenuController : MonoBehaviour
         switch (sceneController.gameState)
         {
             case SceneController.GameState.Play:
-                switch(maps[sceneController.CurrentScene].type)
+                switch (maps[sceneController.CurrentScene].type)
                 {
                     case Map.Type.Boss:
                         time += Time.deltaTime;
@@ -116,20 +114,20 @@ public class MenuController : MonoBehaviour
                 mapInfoUI.SetActive(false);
                 break;
             case SceneController.GameState.Finish:
-                sbyte score;
-                sbyte timerScore = 0;
-                
+                uint score;
+                int timerScore = 0;
+
                 mapInfoUI.SetActive(true);
                 // next scene is NOT out of range.
-                if(sceneController.CurrentScene + 1 < sceneController.SceneCount - 1) // NOT COUNT main menu scene.
+                if (sceneController.CurrentScene + 2 < sceneController.SceneCount) // NOT COUNT main menu scene.
                 {
                     nextMapButton.SetActive(true);
                     mainMenuButton.SetActive(false);
 
                     // Unlock next map.
-                    if(maps[sceneController.CurrentScene + 1] != null && maps[sceneController.CurrentScene + 1].IsMapComplete == false)
+                    if (maps[sceneController.CurrentScene + 1] != null && maps[sceneController.CurrentScene + 1].IsMapComplete == false)
                     {
-                        if(maps[sceneController.CurrentScene].IsMapComplete)
+                        if (maps[sceneController.CurrentScene].IsMapComplete)
                         {
                             maps[sceneController.CurrentScene + 1].IsMapComplete = true;
                         }
@@ -142,12 +140,12 @@ public class MenuController : MonoBehaviour
                 }
 
                 // if in boss map.
-                if(maps[sceneController.CurrentScene].type == Map.Type.Boss)
+                if (maps[sceneController.CurrentScene].type == Map.Type.Boss)
                 {
-                    timerScore = (sbyte)(maps[sceneController.CurrentScene].time - float.Parse(timer.text));
+                    timerScore = (int)(maps[sceneController.CurrentScene].time - time);
 
                 }
-                score = (sbyte)(timerScore + sceneController.Player.Score + sceneController.Player.Stats.HP);
+                score = (uint)(timerScore + sceneController.Player.Score + sceneController.Player.Stats.HP);
                 mapInfo.SetMapInfo(maps[sceneController.CurrentScene], score);
                 break;
             default:
@@ -174,12 +172,12 @@ public class MenuController : MonoBehaviour
 
     public void ReplayCurrentMap()
     {
-        sceneController.LoadScene(sceneController.CurrentScene);
+        sceneController.LoadScene(sceneController.CurrentScene + 1);
     }
 
     public void PlayNextMap()
     {
-        sceneController.LoadScene(sceneController.CurrentScene + 1);
+        sceneController.LoadScene(sceneController.CurrentScene + 2);
     }
 
     public void CloseUI(GameObject closeUI)
@@ -190,9 +188,24 @@ public class MenuController : MonoBehaviour
     {
         openUI.SetActive(true);
     }
+
+    public void OpenUIChooseMap()
+    {
+        for (int index = 0; index < maps.Length; index++)
+        {
+            maps[index] = new Map(listImages[index], maps[index].starPoint, maps[index].name, maps[index].type, maps[index].time);
+        }
+        mainMenu.SetActive(false);
+        chooseMaps.SetActive(true);
+    }
+    public void CloseUIChooseMap()
+    {
+        mainMenu.SetActive(true);
+        chooseMaps.SetActive(false);
+    }
     public void LoadMap(int mapIndex)
     {
-        if(maps[mapIndex].IsMapComplete)
+        if(maps[mapIndex - 1].IsMapComplete)
         {
             DontDestroyOnLoad(sceneController);
             mainMenu.SetActive(false);
@@ -231,13 +244,13 @@ struct MapInfo
         this.score = score;
         this.scoreMore = scoreMore;
     }
-    public void SetMapInfo(Map currentMap, sbyte score)
+    public void SetMapInfo(Map currentMap, uint score)
     {
         string scoreMoreString;
         
         if(score >= currentMap.HighScore)
         {
-            PlayerPrefs.SetInt(string.Format("{0} highScore", currentMap.name), score);
+            PlayerPrefs.SetInt(string.Format("{0} highScore", currentMap.name), (int)score);
             newHighScore.SetActive(true);
             scoreMore.color = Color.yellow;
             scoreMoreString = "Congrats! you have beat the last highScore.";

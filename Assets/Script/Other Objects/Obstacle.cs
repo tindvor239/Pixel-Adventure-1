@@ -19,4 +19,19 @@ public class Obstacle : MonoBehaviour
         Vector2 offset = target * sine;
         transform.position = startPosition + offset;
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Player" || collision.gameObject.tag == "Terrain")
+        {
+            collision.transform.parent = transform;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Terrain")
+        {
+            collision.transform.parent = null;
+        }
+    }
 }

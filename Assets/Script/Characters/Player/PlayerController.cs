@@ -171,7 +171,7 @@ public class PlayerController : Controller
             // jump sound.
             audioSource.PlayOneShot(jumpSound);
 
-            Rigidbody.AddForce(new Vector2(30.0f * -Input.GetAxisRaw("Horizontal"), 10.0f), ForceMode2D.Impulse);
+            Rigidbody.AddForce(new Vector2(30.0f * -Mathf.Sign(Input.GetAxisRaw("Horizontal")), 8.0f), ForceMode2D.Impulse);
         }
     }
     #endregion

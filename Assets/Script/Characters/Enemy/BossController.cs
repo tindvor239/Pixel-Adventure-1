@@ -8,9 +8,12 @@ public class BossController : EnemyController
     [SerializeField] float bulletSpeed;
     [SerializeField] Slider healthBar;
     [SerializeField] float shootTime = 2f;
+
+    SceneController sceneController;
     public override void Start()
     {
         base.Start();
+        sceneController = SceneController.instance;
         healthBar.maxValue = Stats.MaxHp;
 
     }
@@ -19,28 +22,14 @@ public class BossController : EnemyController
     public override void Update()
     {
         base.Update();
-        SetHealth();
-        Shoot();
-        if(Input.GetKeyDown(KeyCode.Space))
+        switch (sceneController.gameState)
         {
-            int ml;
-            ml = countUp(73);
-            print(ml);
+            case SceneController.GameState.Play:
+                SetHealth();
+                Shoot();
+                break;
         }
     }
-
-    int countUp(int index)
-    {
-        int multi = 5;
-        do
-        {
-            multi += multi;
-            print("On mul: " + multi);
-        }
-        while (multi - index > 0 && multi - index < 3);
-        return multi;
-    }
-
     void SetHealth()
     {
         healthBar.value = Stats.HP;

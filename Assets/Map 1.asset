@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Map 1
   m_EditorClassIdentifier: 
   name: Map 1
-  starPoint: 050f17
+  starPoint: 0a0f14
+  type: 0
+  time: 0

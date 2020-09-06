@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Map 3
   m_EditorClassIdentifier: 
   name: Map 3
-  starPoint: 1e4664
+  starPoint: 141e28
   type: 1
-  time: 100
+  time: 250

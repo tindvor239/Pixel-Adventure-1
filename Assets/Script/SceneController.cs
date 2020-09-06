@@ -49,9 +49,8 @@ public class SceneController : MonoBehaviour
         if(level < SceneCount) // not count main menu
         {
             gameState = GameState.Play;
-            currentScene = (sbyte)SceneManager.GetActiveScene().buildIndex;
-            print(currentScene);
-            if(menuController.Maps[currentScene].type == Map.Type.Boss)
+            currentScene = (sbyte)(SceneManager.GetActiveScene().buildIndex - 1);
+            if(menuController.Maps[CurrentScene].type == Map.Type.Boss)
             {
                 boss = GameObject.FindGameObjectWithTag("Enemy").GetComponent<BossController>();
             }
@@ -68,12 +67,12 @@ public class SceneController : MonoBehaviour
         switch (gameState)
         {
             case GameState.Play:
-                if(player.Stats.HP == 0)
+                if(player.Stats != null && player.Stats.HP == 0)
                 {
                     gameState = GameState.GameOver;
                 }
 
-                if(menuController.Maps[currentScene].type == Map.Type.Boss && boss.Stats.HP == 0)
+                if(menuController.Maps[CurrentScene].type == Map.Type.Boss && boss.Stats.HP == 0)
                 {
                     gameState = GameState.Finish;
                 }
