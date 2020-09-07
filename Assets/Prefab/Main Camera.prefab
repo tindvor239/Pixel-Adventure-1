@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339194593793408918}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.2, y: -16.199999, z: 0}
+  m_LocalPosition: {x: -3.5, y: -16.199999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6339194595193504732}
@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fab7f9f4ca6e224094a86ad8c13ab2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRange: {x: 0, y: 0}
+  viewRange: {x: 34.5, y: 17.2}
 --- !u!1 &6339194594014874360
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,7 +69,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339194594014874360}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.8, y: 0.24000001, z: 0}
+  m_LocalPosition: {x: -3.5, y: 0.56, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6339194595193504732}
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fab7f9f4ca6e224094a86ad8c13ab2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRange: {x: 0, y: 0}
+  viewRange: {x: 34.5, y: 17.2}
 --- !u!1 &6339194595193504544
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339194595526436950}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.1, y: 0.24000001, z: 0}
+  m_LocalPosition: {x: 5.5, y: 0.56, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6339194595193504732}
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fab7f9f4ca6e224094a86ad8c13ab2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRange: {x: 0, y: 0}
+  viewRange: {x: 34.5, y: 17.2}
 --- !u!1 &6339194595654850947
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,7 +264,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6339194595654850947}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.1, y: -16.199999, z: 0}
+  m_LocalPosition: {x: 5.5, y: -16.199999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6339194595193504732}
@@ -282,4 +282,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fab7f9f4ca6e224094a86ad8c13ab2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRange: {x: 0, y: 0}
+  viewRange: {x: 34.5, y: 17.2}

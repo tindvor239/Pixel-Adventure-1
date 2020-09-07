@@ -172,11 +172,15 @@ public class MenuController : MonoBehaviour
 
     public void ReplayCurrentMap()
     {
+        DontDestroyOnLoad(sceneController);
+        DontDestroyOnLoad(gameObject);
         sceneController.LoadScene(sceneController.CurrentScene + 1);
     }
 
     public void PlayNextMap()
     {
+        DontDestroyOnLoad(sceneController);
+        DontDestroyOnLoad(gameObject);
         sceneController.LoadScene(sceneController.CurrentScene + 2);
     }
 
