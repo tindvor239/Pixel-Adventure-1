@@ -67,12 +67,12 @@ public class SceneController : MonoBehaviour
         switch (gameState)
         {
             case GameState.Play:
-                if(player.Stats != null && player.Stats.HP == 0)
+                if(player.Stats != null && player.Stats.HP <= 0)
                 {
                     gameState = GameState.GameOver;
                 }
 
-                if(menuController.Maps[CurrentScene].type == Map.Type.Boss && boss.Stats.HP == 0)
+                if(menuController.Maps[CurrentScene].type == Map.Type.Boss && boss.Stats.HP <= 0)
                 {
                     gameState = GameState.Finish;
                 }
